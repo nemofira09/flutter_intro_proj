@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_intro_jamian_jade/models/ScreenArguments.dart';
+import 'package:flutter_intro_jamian_jade/screens/Dashboard.dart';
 import 'package:flutter_intro_jamian_jade/screens/SignupScreen.dart';
 import 'package:flutter_intro_jamian_jade/widgets/CustomTextField.dart';
 import 'package:flutter_intro_jamian_jade/widgets/PasswordField.dart';
@@ -6,7 +8,7 @@ import 'package:flutter_intro_jamian_jade/widgets/PrimaryButton.dart';
 import 'package:flutter_intro_jamian_jade/models/User.dart';
 import 'package:flutter_intro_jamian_jade/provider.dart' as provider;
 
-class LoginScreen extends StatefulWidget{
+class LoginScreen extends StatefulWidget {
   static String routeName = "/login";
 
   @override
@@ -18,86 +20,88 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   String alertText = "";
   bool obscurePassword = true;
-  
+
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width; 
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
         child: Center(
           child: SingleChildScrollView(
-            child: Center(
-              child: Container(
-                width: width * .85,
-                child: Column(
-                  children: [
-                    CustomTextField(
-                        labelText: "Email Address", 
-                        hintText: "Enter your email address", 
-                        controller: emailController, 
-                        textInputType: TextInputType.emailAddress),
-                    const SizedBox(
-                      height: 20.0,
+              child: Center(
+            child: Container(
+              width: width * .85,
+              child: Column(
+                children: [
+                  CustomTextField(
+                      labelText: "Email Address",
+                      hintText: "Enter your email address",
+                      controller: emailController,
+                      textInputType: TextInputType.emailAddress),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  PasswordField(
+                      obscureText: obscurePassword,
+                      onTap: handleObscurePassword,
+                      labelText: "Password",
+                      hintText: "Enter your password",
+                      controller: passwordController),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  PrimaryButton(
+                      text: "Login",
+                      iconData: Icons.login,
+                      onPress: loginValidation),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  Container(
+                    child: Center(
+                      child: GestureDetector(
+                        onTap: signUpNavigation,
+                        child: const Text(
+                            "Don't have an account? Sign-up here.",
+                            style: TextStyle(fontSize: 16.0)),
                       ),
-                    PasswordField(
-                        obscureText: obscurePassword, 
-                        onTap: handleObscurePassword, 
-                        labelText: "Password", 
-                        hintText: "Enter your password", 
-                        controller: passwordController),
-                    const SizedBox(
-                      height: 20.0,
                     ),
-                    PrimaryButton(text: "Login", iconData: Icons.login, onPress: loginValidation),
-                    const SizedBox(
-                      height: 20.0,
-                    ),
-                    Container(
-                      child: Center(
-                        child: GestureDetector(
-                          onTap: signUpNavigation,
-                          child: const Text("Don't have an account? Sign-up here.", style: TextStyle(
-                            fontSize: 16.0
-                          )),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            )
-          ),
+            ),
+          )),
         ),
       ),
     );
   }
 
-  showAlertDialog(BuildContext context) {  
-  // Create button  
-  Widget okButton = TextButton(  
-    child: const Text("OK"),  
-    onPressed: () {  
-      Navigator.of(context).pop();  
-    },  
-  );
-  
-  // Create AlertDialog  
-  AlertDialog alert = AlertDialog(  
-    title: const Text("Login Alert"),  
-    content: Text(alertText),  
-    actions: [  
-      okButton,  
-    ],  
-  );
+  showAlertDialog(BuildContext context) {
+    // Create button
+    Widget okButton = TextButton(
+      child: const Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
 
-    // show the dialog  
-  showDialog(  
-    context: context,  
-    builder: (BuildContext context) {  
-      return alert;  
-    },  
-  );  
-}  
+    // Create AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: const Text("Login Alert"),
+      content: Text(alertText),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
 
   handleObscurePassword() {
     setState(() {
@@ -106,23 +110,27 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   loginValidation() async {
-    if(emailController.text.isEmpty || passwordController.text.isEmpty){
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       alertText = "One of the fields is empty, please check";
-      showAlertDialog(context); 
-    }else{
-    User result = provider.UserList.holder.firstWhere((x) => x.emailAddress == emailController.text && x.password == passwordController.text, orElse: () => User("","","",""));
-    if(result.emailAddress.isEmpty){
-      alertText = "Please check username or password. Login failed.";
-      showAlertDialog(context); 
-    }else{
-      alertText = "LOGIN SUCCESS!";
-      showAlertDialog(context); 
-      //Insert dashboard navigator here.
-    }
+      showAlertDialog(context);
+    } else {
+      User result = provider.UserList.holder.firstWhere(
+          (x) =>
+              x.emailAddress == emailController.text &&
+              x.password == passwordController.text,
+          orElse: () => User("", "", "", ""));
+      if (result.emailAddress.isEmpty) {
+        alertText = "Please check username or password. Login failed.";
+        showAlertDialog(context);
+      } else {
+        //Insert dashboard navigator here.
+        Navigator.pushReplacementNamed(context, Dashboard.routeName,
+            arguments: ScreenArguments(emailController.text));
+      }
     }
   }
 
   signUpNavigation() async {
-    Navigator.pushNamed(context, SignupScreen.routeName);
+    Navigator.pushReplacementNamed(context, SignupScreen.routeName);
   }
-} 
+}
