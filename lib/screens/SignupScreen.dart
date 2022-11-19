@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_intro_jamian_jade/models/User.dart';
+import 'package:flutter_intro_jamian_jade/models/ScreenArguments.dart';
+import 'package:flutter_intro_jamian_jade/screens/Dashboard.dart';
 import 'package:flutter_intro_jamian_jade/screens/LoginScreen.dart';
+import 'package:flutter_intro_jamian_jade/services/AuthService.dart';
 import '../widgets/CustomTextField.dart';
 import '../widgets/PasswordField.dart';
 import '../widgets/PrimaryButton.dart';
@@ -15,14 +18,12 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
+  AuthService _authService  = AuthService();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
   String alertText = "";
   bool obscurePassword = true;
+  bool isLogginIn = false;
 
   @override
   Widget build(BuildContext context) {
@@ -37,22 +38,6 @@ class _SignupScreenState extends State<SignupScreen> {
               child: Column(
                 children: [
                   CustomTextField(
-                      labelText: "First Name",
-                      hintText: "Enter your First Name",
-                      controller: firstNameController,
-                      textInputType: TextInputType.name),
-                  const SizedBox(
-                    height: 20.0,
-                  ),
-                  CustomTextField(
-                      labelText: "Last Name",
-                      hintText: "Enter your Last Name",
-                      controller: lastNameController,
-                      textInputType: TextInputType.name),
-                  const SizedBox(
-                    height: 20.0,
-                  ),
-                  CustomTextField(
                       labelText: "Email Address",
                       hintText: "Enter your email address",
                       controller: emailController,
@@ -66,15 +51,6 @@ class _SignupScreenState extends State<SignupScreen> {
                       labelText: "Password",
                       hintText: "Enter your password",
                       controller: passwordController),
-                  const SizedBox(
-                    height: 20.0,
-                  ),
-                  PasswordField(
-                      obscureText: obscurePassword,
-                      onTap: handleObscurePassword,
-                      labelText: "Confirm Password",
-                      hintText: "Enter your password again",
-                      controller: confirmPasswordController),
                   const SizedBox(
                     height: 20.0,
                   ),
@@ -138,41 +114,37 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   signupValidation() async {
-    if (firstNameController.text.isEmpty ||
-        lastNameController.text.isEmpty ||
-        emailController.text.isEmpty ||
-        passwordController.text.isEmpty ||
-        confirmPasswordController.text.isEmpty) {
+    if (emailController.text.isEmpty ||
+        passwordController.text.isEmpty) {
       alertText = "One of the fields is empty, please check";
       showAlertDialog(context);
     } else {
-      User result = provider.UserList.holder.firstWhere(
-          (x) => x.emailAddress == emailController.text,
-          orElse: () => User("", "", "", ""));
-      if (result.emailAddress.isNotEmpty) {
-        alertText = "Email already taken, please enter a new one.";
-        showAlertDialog(context);
-      } else {
-        if (passwordController.text != confirmPasswordController.text) {
-          alertText = "Passwords don't match, please re-check and try again.";
-          showAlertDialog(context);
-        } else {
-          provider.UserList.addUser(
-              firstNameController.text,
-              lastNameController.text,
-              emailController.text,
-              passwordController.text);
-          alertText = "Signup successfull! Please go to login page and login.";
-          resetFields();
-          showAlertDialog(context);
+      try {
+        setState(() {
+          isLogginIn = true;
+        });
+        var user = _authService.signUp(emailController.text, passwordController.text);
+        // ignore: use_build_context_synchronously
+        FirebaseAuth.instance.authStateChanges().listen((User? user) { 
+        if(user != null){
+          Navigator.pushReplacementNamed(context, Dashboard.routeName, arguments: ScreenArguments(emailController.text));
         }
+      });
+      } catch (e) {
+        print(e.toString());
       }
-    }
+      setState(() {
+          isLogginIn = false;
+      });
+      }
+  }
+
+  loginWithProvider() async {
+    
   }
 
   resetFields() async {
-    lastNameController.text = emailController.text = passwordController.text =
-        confirmPasswordController.text = firstNameController.text = "";
+    emailController.text = passwordController.text = "";
   }
 
   loginNavigation() async {
