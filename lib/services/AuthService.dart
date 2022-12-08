@@ -12,6 +12,7 @@ class AuthService {
       email: emailAddress,
       password: password
     );
+    print(credential);
   } on FirebaseAuthException catch (e) {
     if (e.code == 'user-not-found') {
       print('No user found for that email.');

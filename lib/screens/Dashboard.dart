@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_intro_jamian_jade/screens/Settings.dart';
+import 'package:flutter_intro_jamian_jade/provider.dart' as provider;
 
 import '../models/ScreenArguments.dart';
 
@@ -13,7 +14,9 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as ScreenArguments;
+      //var args = ModalRoute.of(context)!.settings.arguments as ScreenArguments;
+      var email = provider.LocalStorage.localStorage?.getString('emailVal');
+      var uid = provider.LocalStorage.localStorage?.getString('UIDVal');
     return Scaffold(
       appBar: AppBar(
         title: const Text("Welcome to Dashboard"),
@@ -33,8 +36,9 @@ class _DashboardState extends State<Dashboard> {
         ],
       ),
       body: Center(
-        child: Text("Bonus: ${args.message}", style: TextStyle(fontSize: 20)),
+        child: Text("Email: $email, \nUID: $uid", style: TextStyle(fontSize: 20)),
       ),
     );
   }
 }
+//${args.message}, $uid

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_intro_jamian_jade/screens/LoginScreen.dart';
 import 'package:flutter_intro_jamian_jade/services/AuthService.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_intro_jamian_jade/provider.dart' as provider;
 
 class Settings extends StatefulWidget {
   static String routeName = "/settings";
@@ -22,6 +24,8 @@ class _SettingsState extends State<Settings> {
               // ignore: use_build_context_synchronously
               Navigator.of(context).pushNamedAndRemoveUntil(
                   LoginScreen.routeName, (Route<dynamic> route) => false);
+                  provider.LocalStorage.localStorage?.remove('emailVal');
+                  provider.LocalStorage.localStorage?.remove('UIDVal');
             },
             child: const Padding(
               padding: EdgeInsets.only(right: 15.0),

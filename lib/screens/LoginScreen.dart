@@ -9,6 +9,7 @@ import 'package:flutter_intro_jamian_jade/widgets/PasswordField.dart';
 import 'package:flutter_intro_jamian_jade/widgets/PrimaryButton.dart';
 import 'package:flutter_intro_jamian_jade/provider.dart' as provider;
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   static String routeName = "/login";
@@ -149,7 +150,8 @@ class _LoginScreenState extends State<LoginScreen> {
       // ignore: use_build_context_synchronously
       FirebaseAuth.instance.authStateChanges().listen((User? user) { 
         if(user != null){
-          Navigator.pushReplacementNamed(context, Dashboard.routeName, arguments: ScreenArguments(emailController.text));
+          provider.LocalStorage.setToLocalStorage(emailController.text, user.uid);
+          Navigator.pushReplacementNamed(context, Dashboard.routeName);
         }
       });
     } catch (e) {

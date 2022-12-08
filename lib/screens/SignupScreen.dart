@@ -127,6 +127,8 @@ class _SignupScreenState extends State<SignupScreen> {
         // ignore: use_build_context_synchronously
         FirebaseAuth.instance.authStateChanges().listen((User? user) { 
         if(user != null){
+          provider.LocalStorage.localStorage!.setString('emailVal', emailController.text);
+          provider.LocalStorage.localStorage!.setString('UIDVal', user.uid);
           Navigator.pushReplacementNamed(context, Dashboard.routeName, arguments: ScreenArguments(emailController.text));
         }
       });
