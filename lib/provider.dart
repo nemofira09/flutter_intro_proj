@@ -11,17 +11,12 @@ class UserList{
 
 class LocalStorage{
   static SharedPreferences? localStorage;
-  static init() async {
+  static Future init() async {
     localStorage = await SharedPreferences.getInstance();
   }
 
-  static setToLocalStorage(String email, String UID) {
-      localStorage!.setString('emailVal', email);
-      localStorage!.setString('UIDVal', UID);
-  }
-
-  static removeFromLocalStorage() {
-      localStorage!.remove('emailVal');
-      localStorage!.remove('UIDVal');
+  static Future setToLocalStorage(String email, String uid) async{
+      await localStorage!.setString('emailVal', email);
+      await localStorage!.setString('UIDVal', uid);
   }
 }

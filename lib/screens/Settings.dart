@@ -24,8 +24,7 @@ class _SettingsState extends State<Settings> {
               // ignore: use_build_context_synchronously
               Navigator.of(context).pushNamedAndRemoveUntil(
                   LoginScreen.routeName, (Route<dynamic> route) => false);
-                  provider.LocalStorage.localStorage?.remove('emailVal');
-                  provider.LocalStorage.localStorage?.remove('UIDVal');
+                  provider.LocalStorage.localStorage!.clear();
             },
             child: const Padding(
               padding: EdgeInsets.only(right: 15.0),

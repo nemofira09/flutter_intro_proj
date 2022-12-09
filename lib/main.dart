@@ -9,9 +9,9 @@ import 'package:flutter_intro_jamian_jade/provider.dart' as provider;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  provider.LocalStorage.init();
+  await provider.LocalStorage.init();
   String check = provider.LocalStorage.localStorage?.getString('emailVal') ?? 'empty';
-  if(check != 'empty'){
+  if(check == 'empty'){
     runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     initialRoute: LoginScreen.routeName,

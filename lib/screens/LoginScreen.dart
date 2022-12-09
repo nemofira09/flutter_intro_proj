@@ -150,6 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // ignore: use_build_context_synchronously
       FirebaseAuth.instance.authStateChanges().listen((User? user) { 
         if(user != null){
+          print(user);
           provider.LocalStorage.setToLocalStorage(emailController.text, user.uid);
           Navigator.pushReplacementNamed(context, Dashboard.routeName);
         }
